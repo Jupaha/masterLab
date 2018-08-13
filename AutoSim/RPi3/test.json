@@ -1,0 +1,38 @@
+[
+    {
+        "Name": "R",
+        "Value": 1.8,
+        "Unit": "Ohm",
+        "Desc": "coil resistance"
+    },
+    {
+        "Name": "L",
+        "Value": 800e-6,
+        "Unit": "H",
+        "Desc": "coil inductance"
+    },
+    {
+        "Name": "R_C",
+        "Value": 12,
+        "Unit": "Ohm",
+        "Desc": "series resistance of the capacitance"
+    },
+    {
+        "Name": "C",
+        "Value": 2e-6,
+        "Unit": "F",
+        "Desc": "parallel capacitance"
+    },
+    {
+        "Name": "f",
+        "Value": 429,
+        "Unit": "Hz",
+        "Desc": "horn frequency"
+    },
+    {
+        "Name": "PW",
+        "Value": 0.63,
+        "Unit": "-",
+        "Desc": "pulse width"
+    }
+]

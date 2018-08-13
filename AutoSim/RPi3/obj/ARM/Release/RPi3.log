@@ -1,0 +1,60 @@
+﻿  Validating architecture
+  Validating sources
+  Copying sources remotely
+  Starting remote build
+  Compiling sources:
+  main.cpp
+  misc.cpp
+  peri.cpp
+E:\CPP\AutoSimu\RPi3\peri.cpp(108,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(109,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(110,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(111,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(112,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(113,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(114,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(115,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(116,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(117,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(118,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(119,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(120,11): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(170,45): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(178,8): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(268,8): warning : conversion to ‘int’ from ‘std::array<double, 1024u>::value_type {aka double}’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(269,8): warning : conversion to ‘int’ from ‘std::array<double, 1024u>::value_type {aka double}’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(270,8): warning : conversion to ‘int’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(362,8): warning : conversion to ‘int’ from ‘std::array<double, 1024u>::value_type {aka double}’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(363,8): warning : conversion to ‘int’ from ‘std::array<double, 1024u>::value_type {aka double}’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(364,8): warning : conversion to ‘int’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(390,43): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(391,43): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(398,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(399,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(402,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(403,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(424,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(425,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(428,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(429,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(474,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(475,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(492,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\peri.cpp(493,11): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+  simBLDCM.cpp
+  simHorn.cpp
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(6,15): warning : ‘Lconst’ defined but not used [-Wunused-variable]
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(10,15): warning : ‘V’ defined but not used [-Wunused-variable]
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(29,15): warning : ‘h’ defined but not used [-Wunused-variable]
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(33,15): warning : ‘i_C’ defined but not used [-Wunused-variable]
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(34,15): warning : ‘i_T’ defined but not used [-Wunused-variable]
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(35,15): warning : ‘di’ defined but not used [-Wunused-variable]
+E:\CPP\AutoSimu\RPi3\simHorn.cpp(37,15): warning : ‘ddx’ defined but not used [-Wunused-variable]
+  simPMDCM.cpp
+E:\CPP\AutoSimu\RPi3\simPMDCM.cpp(260,43): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\simPMDCM.cpp(260,43): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\CPP\AutoSimu\RPi3\simPMDCM.cpp(280,74): warning : conversion to ‘double’ from ‘long long int’ may alter its value [-Wconversion]
+E:\CPP\AutoSimu\RPi3\simPMDCM.cpp(291,21): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+E:\CPP\AutoSimu\RPi3\simPMDCM.cpp(34,15): warning : ‘phi_last’ defined but not used [-Wunused-variable]
+  Linking objects
+  RPi3.vcxproj -> E:\CPP\AutoSimu\RPi3\bin\ARM\Release\RPi3.out

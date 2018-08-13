@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPi3", "RPi3\RPi3.vcxproj", "{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|ARM.ActiveCfg = Release|ARM
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|ARM.Build.0 = Release|ARM
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|x64.ActiveCfg = Debug|x64
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|x64.Build.0 = Debug|x64
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|x86.ActiveCfg = Debug|x86
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Debug|x86.Build.0 = Debug|x86
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|Any CPU.ActiveCfg = Release|x86
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|ARM.ActiveCfg = Release|ARM
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|ARM.Build.0 = Release|ARM
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|x64.ActiveCfg = Release|x64
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|x64.Build.0 = Release|x64
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|x86.ActiveCfg = Release|x86
+		{CEB4E6F6-7BD3-4CC3-B9D1-DF880945C8FA}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

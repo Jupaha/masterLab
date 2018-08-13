@@ -1,0 +1,257 @@
+	//readJSON("window");
+	//setParamsWindow();
+	//std::cin.ignore();
+	
+	double K = 0.5;
+	double T = 0.0001;
+	double R = 0;
+	double tau = 0;
+	uint16_t R1 = 0;
+	uint16_t R2 = 0;
+	
+	initSPI();
+	usleep(1000);
+	AD5235init();
+	usleep(1000);
+	RtoRint(computeR_from_tau(1462.0 / 1000000.0));
+	//setRC();
+	setR12(1023, 1023);
+	
+	//computeResistanceRL(0.72, .000585);
+	//
+	//while (1)
+	//{
+		//std::cout << "set R1: ";
+		//std::string R1in;
+		//std::getline(std::cin, R1in);
+		//if (!R1in.empty())
+		//{
+			//std::istringstream stream(R1in);
+			//stream >> R1;
+		//}
+		//
+		//std::cout << "set R2: ";
+		//std::string R2in;
+		//std::getline(std::cin, R2in);
+		//if (!R2in.empty())
+		//{
+			//std::istringstream stream(R2in);
+			//stream >> R2;
+		//}
+		//
+		//setR12(R1, R2);
+	//}
+	
+	//while (1)
+	//{
+		//std::cout << "set of R-C link: ";
+		//std::string Rin;
+		//std::getline(std::cin, Rin);
+		//if (!Rin.empty())
+		//{
+			//std::istringstream stream(Rin);
+			//stream >> R;
+		//}
+		//
+		//RtoRint(R);
+		//setR12(R1set, R2set);
+	//}
+	
+	//while (1)
+	//{
+		//std::cout << "set tau in us: ";
+		//std::string tauin;
+		//std::getline(std::cin, tauin);
+		//if (!tauin.empty())
+		//{
+			//std::istringstream stream(tauin);
+			//stream >> tau;
+		//}
+		//
+		//
+		//RtoRint(computeR_from_tau(tau / 1000000));
+		//setR12(R1set, R2set);
+	//}
+	
+	//while (1)
+	//{
+		//std::cout << "set T (def. 0.0001 s): ";
+		//std::string Tin;
+		//std::getline(std::cin, Tin);
+		//if (!Tin.empty())
+		//{
+			//std::istringstream stream(Tin);
+			//stream >> T;
+		//}
+	//
+		//std::cout << "set K in uH (def. 0.5): ";
+		//std::string Kin;
+		//std::getline(std::cin, Kin);
+		//if (!Kin.empty())
+		//{
+			//std::istringstream stream(Kin);
+			//stream >> K;
+		//}
+	//
+		//computeResistance(T, K);
+//
+		//setRC();
+		//std::cin.ignore();
+	//}
+	
+	//while (1)
+	//{
+		//std::cout << "set R (def. 5.96 Ohm): ";
+		//std::string Rin;
+		//std::getline(std::cin, Rin);
+		//if (!Rin.empty())
+		//{
+			//std::istringstream stream(Rin);
+			//stream >> R;
+		//}
+	//
+		//std::cout << "set L in uH (def. 409 uH): ";
+		//std::string Lin;
+		//std::getline(std::cin, Lin);
+		//if (!Lin.empty())
+		//{
+			//std::istringstream stream(Lin);
+			//stream >> L;
+			//L = L/1000000;
+		//}
+	//
+		//computeResistanceRL(R, L);
+//
+		//setRC();
+		//std::cout << "press any key to reconfigure R and L";
+		//std::cin.ignore();
+	//}
+	//
+	
+	//usleep(1000);
+	
+	//uint8_t event = bcm2835_gpio_eds(RPI_V2_GPIO_P1_40);
+	//if (event == 0)
+	//{
+		//std::cout << "#0\n";
+	//}
+	//else if (event == 1)
+	//{
+		//std::cout << "#1\n";
+	//}
+	//else
+	//{
+		//std::cout << "#x\n";
+	//}
+	//AD7484_init();
+
+	double Uadc;
+	double Isim;
+	uint8_t in;
+	
+	float dt = 30E-6;
+	uint16_t dtus = dt*1000000;
+	
+	AD7484_init();
+
+	valueADC adc;
+	while (true)
+	{
+		adc = testADC();
+		std::cout << "ADC: "<< adc.vi << " / " << adc.vd << "\n";
+		sleep(1);
+	}
+	
+	//initATmega();
+	//initSimulation(dtus, true, false);
+	//SPItoATmega(0);
+	
+	//double x[1000];
+	//double y[1000];
+	//for (int j = 0; j<1000; j++)
+	//{
+		//x[j] = j * 2 * M_PI / 1000;
+		//y[j] = sin(x[j])*32.767;
+	//}
+	//while (1)
+	//{
+		//for (int j = 0; j<1000; j++)
+		//{
+			//SPItoATmega(i2int(y[j]));
+		//}
+	//}
+	
+	
+	//while (1)
+	//{
+		//SPItoATmega(i2int(readADC()));
+	//}
+
+	//while (1)
+	//{
+		//SPItoATmega(i2int(30.44));
+		//SPItoATmega(i2int(0.00000001));
+		//SPItoATmega(i2int(-8.23));
+	//}
+
+	//char bytes0[2];
+	//bytes0[0] = 0b10101010;
+	//bytes0[1] = 0b10101010;
+	//
+	//char bytes1[2];
+	//bytes1[0] = 0b11001100;
+	//bytes1[1] = 0b11001100;
+	//int k = 0;
+	//std::cout << "R is " << R << " and L is " << L << "\n";
+	double i = 0;
+	//while (1)
+	//{
+		//i = solve_DGL_PMDCM_ode1(readADC(), dt);
+		//SPItoATmega(i2int(i));
+		////if (k >= 10000)
+		////{
+			////std::cout << "U = " << U << " | i = " << i << "\n";
+			////k = 0;
+		////}
+	//}
+	
+	//while (1)
+	//{
+		//i = readADCint();
+		////std::cout << i << "\n";
+		//SPItoATmega(i);
+	//}
+	
+	
+	//bool stat = false;
+	//while (1)
+	//{
+		//if (stat)
+		//{
+			//while (bcm2835_gpio_lev(ATmegaSPIpin));
+			//bcm2835_spi_writenb(bytes1, 2);
+			//stat = false;
+		//}
+		//else
+		//{
+			//while (bcm2835_gpio_lev(ATmegaSPIpin));
+			//bcm2835_spi_writenb(bytes0, 2);
+			//stat = true;
+		//}
+		////usleep(10000);
+	//}
+	
+	std::cout << "starting simulation...\n";
+	sleep(1);
+
+	while(true)
+	{
+		Uadc = readADC();
+		//std::cout << Uadc << "\n";
+		i = solve_DGL_PMDCM_ode1(U_test_window(), dt);
+		//i = solve_DGL_PMDCM_ode1(U_PWM(U_test(), 25000, 0.5), dt);
+		//i = solve_DGL_PMDCM_ode1(-13, dt);
+		SPItoATmega(i2int(i));
+		//SPItoATmega(0);
+		//std::cout << Isim << "\n";
+	}

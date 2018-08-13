@@ -1,0 +1,65 @@
+﻿  Cleaning remote project directory
+  Validating architecture
+  Validating sources
+  Copying sources remotely to '10.0.0.1'
+  Starting remote build
+  Compiling sources:
+  main.cpp
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\main.cpp(216,47): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\main.cpp(216,53): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\main.cpp(227,46): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\main.cpp(239,42): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\main.cpp(239,48): warning : conversion to ‘float’ from ‘double’ may alter its value [-Wfloat-conversion]
+  misc.cpp
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(11,48): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(20,58): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(22,31): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(23,24): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(25,30): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(26,23): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(170,18): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\misc.cpp(141,13): warning : ‘pos’ defined but not used [-Wunused-variable]
+  peri.cpp
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(132,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(133,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(134,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(135,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(136,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(137,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(138,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(139,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(140,40): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(141,42): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(142,42): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(143,42): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(144,42): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(278,28): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘double’ may alter its value [-Wfloat-conversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(289,15): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(306,16): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(307,17): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(310,16): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(311,17): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(356,20): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(357,20): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(361,26): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(362,26): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(370,23): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(371,24): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(374,23): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(375,24): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(457,19): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\peri.cpp(458,29): warning : conversion to ‘char’ from ‘int’ may alter its value [-Wconversion]
+  simBLDCM.cpp
+  simLamp.cpp
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\simLamp.cpp(42,15): warning : ‘t’ defined but not used [-Wunused-variable]
+  simPMDCM_Windowlever.cpp
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\simPMDCM_Windowlever.cpp(41,15): warning : ‘phi0’ defined but not used [-Wunused-variable]
+  simHorn.cpp
+E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\simHorn.cpp(48,15): warning : ‘di’ defined but not used [-Wunused-variable]
+  simPMDCM_StaticLoad.cpp
+  simPMDCM_ideal.cpp
+  simRC.cpp
+  simRL.cpp
+  testFunctions.cpp
+  Linking objects
+  RPi3.vcxproj -> Release\RPi3

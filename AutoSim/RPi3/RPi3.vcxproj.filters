@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{8f9f1abc-5a24-4470-96d8-2d09ae647826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{9b0356e2-c480-471d-852e-31ba4b8340ed}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="global.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="misc.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="peri.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simBLDCM.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simHorn.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simPMDCM_ideal.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simRL.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simRC.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simPMDCM_StaticLoad.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simPMDCM_Windowlever.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="simLamp.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="testFunctions.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="peri.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simBLDCM.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simHorn.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simPMDCM_ideal.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simRL.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simRC.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simPMDCM_StaticLoad.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simPMDCM_Windowlever.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="simLamp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="testFunctions.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

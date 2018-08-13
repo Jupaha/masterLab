@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <LocalLibPath>E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\Release\RPi3</LocalLibPath>
+  <ObjPaths>E:\03_AutoSim\11_Abgabe\DVD\Software Raspberry\AutoSim\RPi3\obj\Release\</ObjPaths>
+  <Configuration>Release</Configuration>
+  <Platform>ARM</Platform>
+</Project>
