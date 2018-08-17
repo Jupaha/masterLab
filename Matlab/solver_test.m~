@@ -10,7 +10,7 @@
     % Case 4: Orbiting
     ode_case = 2;
     lambda = -3;                    % Lambda for some ODE (dahlquist)
-    dT = [0 10];                    % Simulation time [t_start t_end]
+    dT = [0 1];                    % Simulation time [t_start t_end]
     tol = 1e-7;                     % Tolerance       
     [fct, fct_sol, y0] = getfct(ode_case,lambda);
     
@@ -44,9 +44,8 @@ eigdiff = min(abs(eigV)./abs(eig_min),[],2);
 % ob das lösen explizit möglich ist oder nicht.
 % Unterscheiden sich z.B. die maximalen Schrittweiten stark voneinander
 % (gleichzusetzen mit stark unterscheidenden eigenwerten) so ist die wahl
-% eines impliziten lösers empfehlenswert. Es ist einfacher eine
-% entscheidung über die erforderlichen schrittweiten zu machen, als über
-% eigenwerte.
+% eines impliziten lösers empfehlenswert.
+% 
 
 a_RK4 = [0  0  0 0;
     1/2 0  0 0;
@@ -67,8 +66,7 @@ c_RKDP  = [0; 1/5; 3/10; 4/5; 8/9; 1; 1];
 
 disp(['Start calculation h_max with ' num2str(size(eigV,1)*size(eigV,2)) ' eigenvalues'])
 tic
-%h_eig = get_h_eig(a_RK4,b_RK4,c_RK4,eigV);
-h_eig = get_h_eig(a_RKDP,b5_RKDP,c_RKDP,eigV);
+h_eig = get_h_eig(a_RK4,b_RK4,c_RK4,eigV);
 el_calc = toc;
 disp(['Finished after: ' num2str(el_calc)])
 disp(' ')
@@ -99,13 +97,14 @@ if meanstiff disp('Solve implicit'); else disp('Solve explicit'); end
 disp(' ')
 
 %% Time
-h_min = 1e-7;
+h_min = max(min(h_eigmin),1e-4);
 h_start = 1e-3;
 
 %% Solver selection:
 
 % RK_ODE45, RK_ODE4, RK_imp6, RK_imp6_auto, RK_xorder, RK_DP, RK4_auto,
 % RK4, FWE_auto, FWE2, FWE, BWE_fp
+
 solver_selection = ["RK_DP", "RK_imp6_auto"];
 out = runSolver(solver_selection, fct, dT, y0, h_start, h_min, tol);
     
@@ -151,29 +150,27 @@ end
 %% Step size
 % stepfig = figure('Position', [670 0 770 800]);
 % t_out = t_RKDP;
-% semilogy(t_out(1:end-1), diff(t_out), '-x', 'DisplayName', ['-Steps: ' num2str(length((t_out)))])
+% semilogy(t_out(1:end-1), diff(t_out), '-x', 'DisplayName', ['steps: ' num2str(length((t_out)))])
 % %axis([0 1 1 1e-8])
 % legend
 %% SOLVER
 function [t,y_out] = RK_ODE45(f, dT, y0, h_start, h_min, tau)
 ode_opts = odeset('RelTol',tau, 'AbsTol', tau);
-disp('RK_ODE45')
 tic
 [t,y_out] = ode45(f, dT, y0, ode_opts);
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps:           ' num2str(length(t))])
+disp(['Time:            ' num2str(el_ode)])
 disp(' ')
 end
 function [t,y_out] = RK_ODE4(f, dT, y0, h_start, h_min, tau)
 h = max(h_start, h_min);
-disp('RK_ODE4')
 tic
 t = dT(1):h:dT(2);
 y_out = ode4(f,t,y0);
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps:           ' num2str(length(t))])
+disp(['Time:            ' num2str(el_ode)])
 disp(' ')
 end
 function [t,y_out] = RK_imp6(f, dT, y0, h_start, h_min, tau)
@@ -184,7 +181,6 @@ y_sym = sym('y_sym', [1,length(y0)]);
 Jf_sym = jacobian(f(t_sym,y_sym));
 Jf = matlabFunction(Jf_sym,'Vars',{t_sym,y_sym});
 
-disp('RK_imp6')
 tic
 
 n = 1;
@@ -252,8 +248,8 @@ while t(n)<dT(2)
     t(n) = t(n-1) + h;
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps:           ' num2str(length(t))])
+disp(['Time:            ' num2str(el_ode)])
 disp(' ')
 
 t=t.';
@@ -267,7 +263,6 @@ y_sym = sym('y_sym', [1,length(y0)]);
 Jf_sym = jacobian(f(t_sym,y_sym));
 Jf = matlabFunction(Jf_sym,'Vars',{t_sym,y_sym});
 
-disp('RK_imp6_auto')
 tic
 
 rejects = 0;
@@ -355,9 +350,9 @@ while t(n)<dT(2)
     end  
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(['-Rejects:         ' num2str(rejects)])
+disp(['Steps:           ' num2str(length(t))])
+disp(['Time:            ' num2str(el_ode)])
+disp(['Rejects:         ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
@@ -366,7 +361,6 @@ function [t,y_out] = RK_xorder(f, dT, y0, h_start, h_min, tau)
 % A Variable Order Runge-Kutta Method for Initial Value Problems with Rapidly Varying Right-Hand Sides 
 % von Cash
 
-disp('RK_xorder')
 tic
 
 rejects = 0;
@@ -526,9 +520,9 @@ while t(n-1)<dT(2)
     if ((t(n-1)+h)>dT(2))   h=(dT(2) - t(n-1)); end
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(['-Rejects:         ' num2str(rejects)])
+disp(['Steps:           ' num2str(length(t))])
+disp(['Time:            ' num2str(el_ode)])
+disp(['Rejects:         ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
@@ -537,7 +531,6 @@ function [t,y] = RK_DP(f, dT, y0, h_start, h_min, tau)
 % Fehlerschätzungsformel aus Beispiel 2.28 aus:
 % http://www.asc.tuwien.ac.at/~melenk/teach/num_DGL_SS08/ode_teil4.pdf
 
-disp('RK_DP')
 tic
 
 rejects = 0;
@@ -585,9 +578,10 @@ while t(t_count)<dT(2)
     end
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(['-Rejects:         ' num2str(rejects)])
+disp(['Steps:           ' num2str(length(t))])
+disp(['Time:            ' num2str(el_ode)])
+disp(' ')
+disp(['No. rejects:                 ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
@@ -596,7 +590,6 @@ function [t,y] = RK4_auto(f, dT, y0, h_start, h_min, tau)
 % adaptiver Schrittweitensteuerung mit Extrapolation
 % Fehlerschätzung aus Algorithmus 2.23 von:
 % http://www.asc.tuwien.ac.at/~melenk/teach/num_DGL_SS08/ode_teil4.pdf
-disp('RK4_auto')
 tic
 
 rejects = 0;
@@ -648,15 +641,14 @@ while t(t_count)<dT(2)
 end
 est_out(t_count) = EST;
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(['-Rejects:                 ' num2str(rejects)])
+disp(['Steps of RK4_auto2:          ' num2str(length(t))])
+disp(['Time of RK4_auto2:           ' num2str(el_ode)])
+disp(['No. rejects:                 ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
 function [t,y] = RK4(f, dT, y0, h_start, h_min, tau)
 % Klassisches Runge-Kutta verfahren (m=4)
-disp('RK4')
 tic
 
 t_count = 1;
@@ -680,15 +672,14 @@ while t(t_count)<dT(2)
     t(t_count) = t(t_count-1)+h;
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps of RK4:                ' num2str(length(t))])
+disp(['Time of RK4:                 ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
 function [t,y] = FWE_auto(f, dT, y0, h_start, h_min, tau)
 % Forward Euler method mit automatischer Schrittweitenanpassung nach
 % Algorithmus 17.12 auf Seite 432 von Numerik-Algorithmen
-disp('FWE_auto')
 tic
 
 t_count = 1;
@@ -725,15 +716,14 @@ while t(t_count)<dT(2)
     end
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(['Iterations:         ' num2str(iteration)])
+disp(['Steps of FWE_auto:           ' num2str(length(t))])
+disp(['Time of FWE_auto:            ' num2str(el_ode)])
+disp(['FWE_auto Iterations:         ' num2str(iteration)])
 disp(' ')
 t=t.';
 end
 function [t,y] = FWE2(f, dT, y0, h_start, h_min, tau)
 %Forward Euler Method zweiter Ordnung
-disp('FWE2')
 tic
 
 t_count = 1;
@@ -757,14 +747,13 @@ while t(t_count)<dT(2)
     t(t_count) = t(t_count-1)+h;
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps of FWE2:               ' num2str(length(t))])
+disp(['Time of FWE2:                ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
 function [t,y] = FWE(f, dT, y0, h_start, h_min, tau)
 % Forward Euler Method
-disp('FWE')
 tic
 t_count = 1;
 t(t_count) = dT(1);
@@ -778,14 +767,13 @@ while t(t_count)<dT(2)
     t(t_count) = t(t_count-1)+h;
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps of FWE:                ' num2str(length(t))])
+disp(['Time of FWE:                 ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
 function [t,y] = BWE_fp(f, dT, y0, h_start, h_min, tau)
 % Backward Euler Method with fixed point iteration
-disp('BWE_fp')
 tic
 h = h_start;
 t_count = 1;
@@ -811,8 +799,8 @@ dy = 100;
     y(t_count,:) = yk1;
 end
 el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
+disp(['Steps of BWE_fp:             ' num2str(length(t))])
+disp(['Time of BWE_fp:              ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
@@ -958,7 +946,7 @@ switch n
     fct = @(t,x)[...
         p(1) * x(2) *p(2) * x(1);
         p(4) * (x(2) - p(5)) *4 + p(6) * x(2) * p(2) * x(1) *2];
-    y0 = [100; 100];
+    y0 = [0; 100];
     fct_sol = 0;
 
     case 4
