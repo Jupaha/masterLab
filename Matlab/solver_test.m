@@ -65,7 +65,7 @@ b4_RKDP = [      35/384,     0,      500/1113,    125/192,       -2187/6784,    
 b5_RKDP = [  5179/57600,     0,    7571/16695,    393/640,    -92097/339200,  187/2100,   1/40];
 c_RKDP  = [0; 1/5; 3/10; 4/5; 8/9; 1; 1];
 
-disp(['Start calculation h_max with ' num2str(size(eigV,1)*size(eigV,2)) ' eigenvalues'])
+disp(['Start calculation of h_max with ' num2str(size(eigV,1)*size(eigV,2)) ' eigenvalues'])
 tic
 %h_eig = get_h_eig(a_RK4,b_RK4,c_RK4,eigV);
 h_eig = get_h_eig(a_RKDP,b5_RKDP,c_RKDP,eigV);
@@ -118,10 +118,10 @@ figure(plotfig)
 pT = dT(1):1/((dT(2)-dT(1))*1000):dT(2);
 solplot = fct_sol(pT).';
 for i=1:length(y0)
-subplot(length(y0),1,i)
-hold on
-plot(pT, solplot(:,i), '--r', 'DisplayName', 'Exact Solution');
-legend('Location', 'northeast')
+    subplot(length(y0),1,i)
+    hold on
+    plot(pT, solplot(:,i), '--r', 'DisplayName', 'Exact Solution');
+    legend('Location', 'northeast')
 end
 end
 
