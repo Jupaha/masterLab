@@ -11,7 +11,8 @@
     ode_case = 2;
     lambda = -3;                    % Lambda for some ODE (dahlquist)
     dT = [0 10];                    % Simulation time [t_start t_end]
-    tol = 1e-7;                     % Tolerance       
+    tol = 1e-5;                     % Tolerance
+    y_out_fct = @(y_state)[y_state];
     [fct, fct_sol, y0] = getfct(ode_case,lambda);
     
 
@@ -99,15 +100,16 @@ if meanstiff disp('Solve implicit'); else disp('Solve explicit'); end
 disp(' ')
 
 %% Time
-h_min = 1e-7;
-h_start = 1e-3;
+h_min = 2e-2;
+h_start = 2e-2;
 
 %% Solver selection:
 
-% RK_ODE45, RK_ODE4, RK_imp6, RK_imp6_auto, RK_xorder, RK_DP, RK4_auto,
+% RK_imp6, RK_imp6_auto, RK_xorder, RK_DP, RK4_auto,
 % RK4, FWE_auto, FWE2, FWE, BWE_fp
-solver_selection = ["RK_DP", "RK_imp6_auto"];
-out = runSolver(solver_selection, fct, dT, y0, h_start, h_min, tol);
+solver_selection = ["RK4", "RK_imp6", "RK_imp6_auto", "RK_xorder", "RK_DP", "RK4_auto"];
+
+out = runSolver(solver_selection, fct, dT, y0, h_start, h_min, tol, @allReset, y_out_fct, @u_input, 0);
     
 %% Plot numerical solutions
 plotfig = plotNumeric(solver_selection, ode_case, out, length(y0));
@@ -155,42 +157,27 @@ end
 % %axis([0 1 1 1e-8])
 % legend
 %% SOLVER
-function [t,y_out] = RK_ODE45(f, dT, y0, h_start, h_min, tau)
-ode_opts = odeset('RelTol',tau, 'AbsTol', tau);
-disp('RK_ODE45')
-tic
-[t,y_out] = ode45(f, dT, y0, ode_opts);
-el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(' ')
-end
-function [t,y_out] = RK_ODE4(f, dT, y0, h_start, h_min, tau)
-h = max(h_start, h_min);
-disp('RK_ODE4')
-tic
-t = dT(1):h:dT(2);
-y_out = ode4(f,t,y0);
-el_ode = toc;
-disp(['-Steps:           ' num2str(length(t))])
-disp(['-Time:            ' num2str(el_ode)])
-disp(' ')
-end
-function [t,y_out] = RK_imp6(f, dT, y0, h_start, h_min, tau)
+function [t,y_out] = RK_imp6(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % IMPLICIT RUNGE-KUTTA ALGORITHM USING NEWTON-RAPHSON METHOD by Andr´es L. Granados M
 
+
+%fct = f{initState};
+fct = f;
+
 syms t_sym;
+syms u_sym;
 y_sym = sym('y_sym', [1,length(y0)]);
-Jf_sym = jacobian(f(t_sym,y_sym));
-Jf = matlabFunction(Jf_sym,'Vars',{t_sym,y_sym});
+Jf_sym = jacobian(fct(t_sym,y_sym,u_sym));
+Jf = matlabFunction(Jf_sym,'Vars',{t_sym,y_sym,u_sym});
 
 disp('RK_imp6')
 tic
 
 n = 1;
 t(n) = dT(1);
-h = h_start;
-y_out(n,:) = y0(:);
+h = max(h_start, h_min);
+y(n,:) = y0(:);
+states(n) = initState;
 
 % explicit RK coefficients
 a_exp = [(5-sqrt(15))/10,                0,         0;
@@ -213,17 +200,18 @@ N = length(y0);
 
 I = eye(N);
 
-Jg = @(tn,yn,hn,knsum)[ hn*a(1,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(1,:)))-I,    hn*a(1,2)*(Jf(tn + c(2) * hn, yn + hn * knsum(1,:))),           hn*a(1,3)*(Jf(tn + c(3) * hn, yn + hn * knsum(1,:)));
-                        hn*a(2,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(2,:))),           hn*a(2,2)*(Jf(tn + c(2) * hn, yn + hn * knsum(2,:)))-I,    hn*a(2,3)*(Jf(tn + c(3) * hn, yn + hn * knsum(2,:)));
-                        hn*a(3,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(3,:))),           hn*a(3,2)*(Jf(tn + c(2) * hn, yn + hn * knsum(3,:))),           hn*a(3,3)*(Jf(tn + c(3) * hn, yn + hn * knsum(3,:)))-I];
-
+Jg = @(tn,yn,un,hn,knsum)[  hn*a(1,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(1,:), un))-I,         hn*a(1,2)*(Jf(tn + c(2) * hn, yn + hn * knsum(1,:), un)),           hn*a(1,3)*(Jf(tn + c(3) * hn, yn + hn * knsum(1,:), un));
+                            hn*a(2,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(2,:), un)),           hn*a(2,2)*(Jf(tn + c(2) * hn, yn + hn * knsum(2,:), un))-I,         hn*a(2,3)*(Jf(tn + c(3) * hn, yn + hn * knsum(2,:), un));
+                            hn*a(3,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(3,:), un)),           hn*a(3,2)*(Jf(tn + c(2) * hn, yn + hn * knsum(3,:), un)),           hn*a(3,3)*(Jf(tn + c(3) * hn, yn + hn * knsum(3,:), un))-I];
                    
 while t(n)<dT(2)
+    %fct = f{states(t_count)};
+    u_in = get_u(t(n));
     
     % estimation of initial k
-    k(1,:) = f(t(n), y_out(n,:)).';
-    k(2,:) = f(t(n) + c(2) * h, y_out(n,:) + h * a_exp(2,1) * k(1,:)).';    
-    k(3,:) = f(t(n) + c(3) * h, y_out(n,:) + h * (a_exp(3,1) * k(1,:) + a_exp(3,2) * k(2,:))).'; 
+    k(1,:) = fct(t(n), y(n,:), u_in).';
+    k(2,:) = fct(t(n) + c(2) * h, y(n,:) + h * a_exp(2,1) * k(1,:), u_in).';    
+    k(3,:) = fct(t(n) + c(3) * h, y(n,:) + h * (a_exp(3,1) * k(1,:) + a_exp(3,2) * k(2,:)), u_in).'; 
     
     err = 1;
     while max(err)>1e-12
@@ -231,11 +219,11 @@ while t(n)<dT(2)
             (a(2,1) * k(1,:) + a(2,2) * k(2,:) + a(2,3) * k(3,:));
             (a(3,1) * k(1,:) + a(3,2) * k(2,:) + a(3,3) * k(3,:))];
     
-    g = [f(t(n) + c(1) * h, y_out(n,:) + h * ksum(1,:))-k(1,:).';
-         f(t(n) + c(2) * h, y_out(n,:) + h * ksum(2,:))-k(2,:).';
-         f(t(n) + c(3) * h, y_out(n,:) + h * ksum(3,:))-k(3,:).'];
+    g = [fct(t(n) + c(1) * h, y(n,:) + h * ksum(1,:), u_in)-k(1,:).';
+         fct(t(n) + c(2) * h, y(n,:) + h * ksum(2,:), u_in)-k(2,:).';
+         fct(t(n) + c(3) * h, y(n,:) + h * ksum(3,:), u_in)-k(3,:).'];
       
-    Jgn = Jg(t(n),y_out(n,:),h,ksum);
+    Jgn = Jg(t(n),y(n,:),u_in,h,ksum);
     
     dk_srt = linsolve(Jgn,-1*g);
     dk = [dk_srt(1:N).';
@@ -247,10 +235,15 @@ while t(n)<dT(2)
     err = abs(omega*h*[c(1)*norm(dk(1,:)); c(2)*norm(dk(2,:)); c(3)*norm(dk(3,:))]);
     end
     
-    y_out(n+1,:) = y_out(n,:) + h * (b(1)*k(1,:) + b(2)*k(2,:) + b(3)*k(3,:));
+    y(n+1,:) = y(n,:) + h * (b(1)*k(1,:) + b(2)*k(2,:) + b(3)*k(3,:));
     n = n+1;
     t(n) = t(n-1) + h;
+    
+    [y(n,:), states(n)] = reset_y(t(n),y(n,:),u_in,states(n-1));
 end
+
+y_out = get_y_out(y);
+
 el_ode = toc;
 disp(['-Steps:           ' num2str(length(t))])
 disp(['-Time:            ' num2str(el_ode)])
@@ -258,7 +251,7 @@ disp(' ')
 
 t=t.';
 end
-function [t,y_out] = RK_imp6_auto(f, dT, y0, h_start, h_min, tau)
+function [t,y] = RK_imp6_auto(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % IMPLICIT RUNGE-KUTTA ALGORITHM USING NEWTON-RAPHSON METHOD by Andr´es L. Granados M
 % Erweitert mit adaptive step size control
 
@@ -272,18 +265,18 @@ tic
 
 rejects = 0;
 mu = 2;
-rho = 0.8;
+rho = 0.9;
 n = 1;
 t(n) = dT(1);
 h = h_start;
-y_out(n,:) = y0(:);
+y(n,:) = y0(:);
 
 % explicit RK coefficients
 a_exp = [(5-sqrt(15))/10,                0,         0;
         -(3+sqrt(15))/4,    (5+sqrt(15))/4,         0;
         3*(4+sqrt(15))/5,    -(35+9*sqrt(15))/10,    2*(4+sqrt(15))/5];
 
-p = 6; % RK of 6th order
+p = 5; % RK of 6th order
 % implicit RK coefficients
 a = [5/36               (10-3*sqrt(15))/45  (25-6*sqrt(15))/180;
     (10+3*sqrt(15))/72  2/9                 (10-3*sqrt(15))/72
@@ -308,9 +301,9 @@ Jg = @(tn,yn,hn,knsum)[ hn*a(1,1)*(Jf(tn + c(1) * hn, yn + hn * knsum(1,:)))-I, 
 while t(n)<dT(2)
     
     % estimation of initial k
-    k(1,:) = f(t(n), y_out(n,:)).';
-    k(2,:) = f(t(n) + c(2) * h, y_out(n,:) + h * a_exp(2,1) * k(1,:)).';    
-    k(3,:) = f(t(n) + c(3) * h, y_out(n,:) + h * (a_exp(3,1) * k(1,:) + a_exp(3,2) * k(2,:))).'; 
+    k(1,:) = f(t(n), y(n,:)).';
+    k(2,:) = f(t(n) + c(2) * h, y(n,:) + h * a_exp(2,1) * k(1,:)).';    
+    k(3,:) = f(t(n) + c(3) * h, y(n,:) + h * (a_exp(3,1) * k(1,:) + a_exp(3,2) * k(2,:))).'; 
     
     err = 1;
     while max(err)>1e-12 % Abbruchbedinung einbauen wenn err nicht konvergiert -> kleineres h
@@ -318,11 +311,11 @@ while t(n)<dT(2)
             (a(2,1) * k(1,:) + a(2,2) * k(2,:) + a(2,3) * k(3,:));
             (a(3,1) * k(1,:) + a(3,2) * k(2,:) + a(3,3) * k(3,:))];
     
-    g = [f(t(n) + c(1) * h, y_out(n,:) + h * ksum(1,:))-k(1,:).';
-         f(t(n) + c(2) * h, y_out(n,:) + h * ksum(2,:))-k(2,:).';
-         f(t(n) + c(3) * h, y_out(n,:) + h * ksum(3,:))-k(3,:).'];
+    g = [f(t(n) + c(1) * h, y(n,:) + h * ksum(1,:))-k(1,:).';
+         f(t(n) + c(2) * h, y(n,:) + h * ksum(2,:))-k(2,:).';
+         f(t(n) + c(3) * h, y(n,:) + h * ksum(3,:))-k(3,:).'];
       
-    Jgn = Jg(t(n),y_out(n,:),h,ksum);
+    Jgn = Jg(t(n),y(n,:),h,ksum);
     
     dk_srt = linsolve(Jgn,-1*g);
     dk = [dk_srt(1:N).';
@@ -334,8 +327,8 @@ while t(n)<dT(2)
     err = abs(omega*h*[c(1)*norm(dk(1,:)); c(2)*norm(dk(2,:)); c(3)*norm(dk(3,:))]);
     end
     
-    y_step   = y_out(n,:) + h * (b(1)*k(1,:) + b(2)*k(2,:) + b(3)*k(3,:));
-    ye_step  = y_out(n,:) + h * (be(1)*k(1,:) + be(2)*k(2,:) + be(3)*k(3,:));
+    y_step   = y(n,:) + h * (b(1)*k(1,:) + b(2)*k(2,:) + b(3)*k(3,:));
+    ye_step  = y(n,:) + h * (be(1)*k(1,:) + be(2)*k(2,:) + be(3)*k(3,:));
      
     EST = norm(y_step - ye_step);
     
@@ -343,9 +336,9 @@ while t(n)<dT(2)
         n = n+1;
         t(n) = t(n-1) + h;
                 
-        y_out(n,:) = y_step;
+        y(n,:) = y_step;
                 
-        h = max(h_min, min(mu*h, rho*((tau/EST)*h^(p+1) )^(1/p)));
+        h = max(h_min, min(mu*h, rho*((tau/EST)*h^(p+1))^(1/p)));
                
         if ((t(n)+h)>dT(2))   h=dT(2) - t(n); end
 
@@ -361,7 +354,7 @@ disp(['-Rejects:         ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
-function [t,y_out] = RK_xorder(f, dT, y0, h_start, h_min, tau)
+function [t,y] = RK_xorder(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % RK mit anpassung der Ordnung je nach Fehler aus:
 % A Variable Order Runge-Kutta Method for Initial Value Problems with Rapidly Varying Right-Hand Sides 
 % von Cash
@@ -373,7 +366,7 @@ rejects = 0;
 n = 1;
 t(n) = dT(1);
 h = h_start;
-y_out(n,:) = y0(:);
+y(n,:) = y0(:);
 
 
 twiddle(n,1:2) = [1.5 1.1];
@@ -402,11 +395,11 @@ n = n+1;
 
 
 while t(n-1)<dT(2)
-    k(1,:) = f(t(n-1), y_out(n-1,:)).';
-    k(2,:) = f(t(n-1) + 1/5 * h, y_out(n-1,:) + h * 1/5 * k(1,:)).';
+    k(1,:) = f(t(n-1), y(n-1,:)).';
+    k(2,:) = f(t(n-1) + 1/5 * h, y(n-1,:) + h * 1/5 * k(1,:)).';
     
-    y(1,:) = y_out(n-1,:) + h * k(1,:);
-    y(2,:) = y_out(n-1,:) + h * (-3/2 * k(1,:) + 5/2 * k(2,:));
+    y(1,:) = y(n-1,:) + h * k(1,:);
+    y(2,:) = y(n-1,:) + h * (-3/2 * k(1,:) + 5/2 * k(2,:));
     
     ERR(n,1)   = norm(y(2,:) - y(1,:))^(1/2);
     E(n,1)     = ERR(n,1) / tau^(1/2);
@@ -417,10 +410,10 @@ while t(n-1)<dT(2)
         h = max(1/5, SF/esttol) * h;
         rejects = rejects + 1;
     else
-       k(3,:) = f(t(n-1) + 3/10 * h, y_out(n-1,:) + h * (3/40 * k(1,:) + 9/40 * k(2,:))).';
-       k(4,:) = f(t(n-1) + 3/5  * h, y_out(n-1,:) + h * (3/10 * k(1,:) +-9/10 * k(2,:) + 6/5 *k(3,:))).';
+       k(3,:) = f(t(n-1) + 3/10 * h, y(n-1,:) + h * (3/40 * k(1,:) + 9/40 * k(2,:))).';
+       k(4,:) = f(t(n-1) + 3/5  * h, y(n-1,:) + h * (3/10 * k(1,:) +-9/10 * k(2,:) + 6/5 *k(3,:))).';
 
-       y(3,:) = y_out(n-1,:) + h * (19/54 * k(1,:) + -10/27 * k(3,:) + 55/54 * k(4,:));
+       y(3,:) = y(n-1,:) + h * (19/54 * k(1,:) + -10/27 * k(3,:) + 55/54 * k(4,:));
        
        ERR(n,2) = norm(y(3,:) - y(2,:))^(1/3);
        E(n,2)   = ERR(n,2) / tau^(1/3);
@@ -431,7 +424,7 @@ while t(n-1)<dT(2)
                % check the error of the second order solution
                if norm(h/10 * (k(2,:)-k(1,:)))<tau
                    % accept second order solution
-                   y_out(n,:) = y_out(n-1,:) + h/10 * (k(1,:) + k(2,:));
+                   y(n,:) = y(n-1,:) + h/10 * (k(1,:) + k(2,:));
                    h = h/5;
                    t(n) = t(n-1) + h;
                    twiddle(n,:) = twiddle(n-1,:);
@@ -449,11 +442,11 @@ while t(n-1)<dT(2)
                rejects = rejects + 1;
            end
        else
-           k(5,:) = f(t(n-1) +        h, y_out(n-1,:) + h * (-11/54       * k(1,:) + 5/2        * k(2,:) +-70/27      * k(3,:) + 35/27          * k(4,:))).';
-           k(6,:) = f(t(n-1) + 7/8  * h, y_out(n-1,:) + h * (1631/55296   * k(1,:) + 175/512	* k(2,:) + 575/13824  * k(3,:) + 44275/110592   * k(4,:) + 253/4096 * k(5,:))).';
+           k(5,:) = f(t(n-1) +        h, y(n-1,:) + h * (-11/54       * k(1,:) + 5/2        * k(2,:) +-70/27      * k(3,:) + 35/27          * k(4,:))).';
+           k(6,:) = f(t(n-1) + 7/8  * h, y(n-1,:) + h * (1631/55296   * k(1,:) + 175/512	* k(2,:) + 575/13824  * k(3,:) + 44275/110592   * k(4,:) + 253/4096 * k(5,:))).';
           
-           y(4,:) = y_out(n-1,:) + h * (2825/27648    * k(1,:) + 18575/48384    * k(3,:) + 13525/55296	* k(4,:) + 277/14336 * k(5,:) + 1/4         * k(6,:));
-           y(5,:) = y_out(n-1,:) + h * (37/378        * k(1,:) + 250/621        * k(3,:) + 125/594        * k(4,:) +                    512/1771    * k(6,:));
+           y(4,:) = y(n-1,:) + h * (2825/27648    * k(1,:) + 18575/48384    * k(3,:) + 13525/55296	* k(4,:) + 277/14336 * k(5,:) + 1/4         * k(6,:));
+           y(5,:) = y(n-1,:) + h * (37/378        * k(1,:) + 250/621        * k(3,:) + 125/594        * k(4,:) +                    512/1771    * k(6,:));
            
            ERR(n,4) = norm(y(5,:) - y(4,:))^(1/5);
            E(n,4)   = ERR(n,4) / tau^(1/5);
@@ -471,7 +464,7 @@ while t(n-1)<dT(2)
                    % check the accuracy of the third order solution
                    if norm(h/10 * (k(1,:) - 2*k(3,:) + k(4,:)))<tau
                        % accept the order 3 solution
-                       y_out(n,:) = y_out(n-1,:) + h * (1/10 * k(1,:) + 2/5 * k(3,:) + 1/10 * k(4,:));
+                       y(n,:) = y(n-1,:) + h * (1/10 * k(1,:) + 2/5 * k(3,:) + 1/10 * k(4,:));
                        h = 3*h/5;
                        t(n) = t(n-1) + h;
                        twiddle(n,:) = twiddle(n-1,:);
@@ -483,7 +476,7 @@ while t(n-1)<dT(2)
                        % check the accuracy of the second order solution
                        if norm(h/10 * (k(2,:)-k(1,:)))<tau
                            % accept second order solution
-                           y_out(n,:) = y_out(n-1,:) + h/10 * (k(1,:) + k(2,:));
+                           y(n,:) = y(n-1,:) + h/10 * (k(1,:) + k(2,:));
                            h = h/5;
                            t(n) = t(n-1) + h;
                            twiddle(n,:) = twiddle(n-1,:);
@@ -503,7 +496,7 @@ while t(n-1)<dT(2)
                end
            else
                % accept the order 5 solution
-               y_out(n,:) = y(5,:);
+               y(n,:) = y(5,:);
                t(n) = t(n-1) + h;
                h = min(5, SF/E(n,4)) * h;
                               
@@ -532,7 +525,7 @@ disp(['-Rejects:         ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
-function [t,y] = RK_DP(f, dT, y0, h_start, h_min, tau)
+function [t,y] = RK_DP(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % Eingebettetes Runge Kutta Verfahren von Dormand & Prince
 % Fehlerschätzungsformel aus Beispiel 2.28 aus:
 % http://www.asc.tuwien.ac.at/~melenk/teach/num_DGL_SS08/ode_teil4.pdf
@@ -564,8 +557,9 @@ b5 = [  5179/57600,     0,    7571/16695,    393/640,    -92097/339200,  187/210
 c  = [0; 1/5; 3/10; 4/5; 8/9; 1; 1];
 
 while t(t_count)<dT(2)    
-    y4  = RK_step(a,b4,c,f,y(t_count,:),t(t_count),h);
-    y5  = RK_step(a,b5,c,f,y(t_count,:),t(t_count),h);
+    u_in = get_u(t(t_count));
+    y4  = RK_step(a,b4,c,f,t(t_count),y(t_count,:),u_in,h);
+    y5  = RK_step(a,b5,c,f,t(t_count),y(t_count,:),u_in,h);
  
     EST = norm(y5 - y4);
     
@@ -591,7 +585,7 @@ disp(['-Rejects:         ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
-function [t,y] = RK4_auto(f, dT, y0, h_start, h_min, tau)
+function [t,y] = RK4_auto(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % Klassisches Runge Kutta Verfahren mit
 % adaptiver Schrittweitensteuerung mit Extrapolation
 % Fehlerschätzung aus Algorithmus 2.23 von:
@@ -618,10 +612,10 @@ c = [0; 1/2; 1/2; 1];
     
 while t(t_count)<dT(2)
     h2 = 2*h;
-    
-    y2      = RK_step(a,b,c,f,y(t_count,:),t(t_count),h2);
-    y12     = RK_step(a,b,c,f,y(t_count,:),t(t_count),h);
-    y_top   = RK_step(a,b,c,f,y12,t(t_count) + h,h);
+    u_in = get_u(t(t_count));
+    y2      = RK_step(a,b,c,f,t(t_count),y(t_count,:),u_in,h2);
+    y12     = RK_step(a,b,c,f,t(t_count),y(t_count,:),u_in,h);
+    y_top   = RK_step(a,b,c,f,t(t_count)+ h,y12,u_in,h);
         
     EST = norm(y2 - y_top)/(1 - 2^(-p));
  
@@ -650,11 +644,11 @@ est_out(t_count) = EST;
 el_ode = toc;
 disp(['-Steps:           ' num2str(length(t))])
 disp(['-Time:            ' num2str(el_ode)])
-disp(['-Rejects:                 ' num2str(rejects)])
+disp(['-Rejects:         ' num2str(rejects)])
 disp(' ')
 t=t.';
 end
-function [t,y] = RK4(f, dT, y0, h_start, h_min, tau)
+function [t,y_out] = RK4(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % Klassisches Runge-Kutta verfahren (m=4)
 disp('RK4')
 tic
@@ -663,6 +657,7 @@ t_count = 1;
 t(t_count) = dT(1);
 h = h_start;
 y(t_count,:) = y0(:);
+states(t_count) = initState;
 
 % RK coefficients
 a = [ 0,  0, 0, 0;...
@@ -672,20 +667,23 @@ a = [ 0,  0, 0, 0;...
 b = [1/6, 1/3, 1/3, 1/6];
 c = [0; 1/2; 1/2; 1];
 
-
-while t(t_count)<dT(2)   
-    y(t_count+1,:) = RK_step(a,b,c,f,y(t_count,:),t(t_count),h);
+while t(t_count)<dT(2)  
+    u_in = get_u(t(t_count));
+    y(t_count+1,:) = RK_step(a,b,c,f,t(t_count),y(t_count,:),u_in,h);
     
     t_count = t_count + 1;
     t(t_count) = t(t_count-1)+h;
+    
+    [y(t_count,:), states(t_count)] = reset_y(t(t_count),y(t_count,:),u_in,states(t_count-1));
 end
+y_out = get_y_out(y);
 el_ode = toc;
 disp(['-Steps:           ' num2str(length(t))])
 disp(['-Time:            ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
-function [t,y] = FWE_auto(f, dT, y0, h_start, h_min, tau)
+function [t,y] = FWE_auto(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % Forward Euler method mit automatischer Schrittweitenanpassung nach
 % Algorithmus 17.12 auf Seite 432 von Numerik-Algorithmen
 disp('FWE_auto')
@@ -731,7 +729,7 @@ disp(['Iterations:         ' num2str(iteration)])
 disp(' ')
 t=t.';
 end
-function [t,y] = FWE2(f, dT, y0, h_start, h_min, tau)
+function [t,y] = FWE2(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 %Forward Euler Method zweiter Ordnung
 disp('FWE2')
 tic
@@ -762,7 +760,7 @@ disp(['-Time:            ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
-function [t,y] = FWE(f, dT, y0, h_start, h_min, tau)
+function [t,y] = FWE(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % Forward Euler Method
 disp('FWE')
 tic
@@ -783,7 +781,7 @@ disp(['-Time:            ' num2str(el_ode)])
 disp(' ')
 t=t.';
 end
-function [t,y] = BWE_fp(f, dT, y0, h_start, h_min, tau)
+function [t,y] = BWE_fp(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 % Backward Euler Method with fixed point iteration
 disp('BWE_fp')
 tic
@@ -839,23 +837,23 @@ else
    end
 end
 end
-function out = runSolver(sel, f, dT, y0, h_start, h_min, tau)
+function out = runSolver(sel, f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState)
 out = struct;
 
 for i=1:length(sel)
-eval(['[t_out, y_out] = ' char(sel(i)) '(f, dT, y0, h_start, h_min, tau);']);  
+eval(['[t_out, y_out] = ' char(sel(i)) '(f, dT, y0, h_start, h_min, tau, reset_y, get_y_out, get_u, initState);']);  
 eval([char(sel(i)) '= struct(''time'',t_out, ''yout'',y_out);']);
 [out(:).(char(sel(i)))] = eval(char(sel(i)));
 end
 end
-function [yn1] = RK_step(a,b,c,f,yn,t,h)
+function [yn1] = RK_step(a,b,c,f,t,yn,u,h)
     s = length(c);
     k(1:s,1:length(yn)) = 0;
     for i=1:s
-        k(i,:)   = f(t + c(i) * h, yn + h * (a(i,:)*k)).';
+        k(i,:)   = f(t + c(i) * h, (yn + h * (a(i,:)*k)).', u).';
     end
     yn1 = yn + h * b * k;    
-end 
+end  
 function Y = ode4(odefun,tspan,y0,varargin)
 %ODE4  Solve differential equations with a non-adaptive method of order 4.
 %   Y = ODE4(ODEFUN,TSPAN,Y0) with TSPAN = [T1, T2, T3, ... TN] integrates 
@@ -927,15 +925,15 @@ switch n
     case 1
     %% dahlquistsche Testgleichung
     lmbd = -3;
-    fct = @(t,y)[lmbd*y];
+    fct = @(t,y,u)[lmbd*y];
     fct_sol = @(t)[exp(lmbd.*t)];
     y0 = ones(1,1);
     
     case 2
     %% stiff ODE system
-    fct = @(t,y)[98 * y(1) + 198 * y(2); -99 * y(1) - 199 * y(2)];
+    fct = @(t,y,u)[98 * y(1) + 198 * y(2); -99 * y(1) - 199 * y(2)];
     fct_sol = @(t)[2 .* exp(-t) - exp(-100 .* t); -exp(-t) + exp(-100.*t)];
-    y0 = [1 0];
+    y0 = [1; 0];
     
     case 3
     %% Halogen ODE
@@ -955,9 +953,9 @@ switch n
     p(5) = T_u;
     p(6) = R_c / (c_w * T_u * k);
     % define DGLs
-    fct = @(t,x)[...
-        p(1) * x(2) *p(2) * x(1);
-        p(4) * (x(2) - p(5)) *4 + p(6) * x(2) * p(2) * x(1) *2];
+    fct = @(t,x,u)[...
+    p(1) * x(2)^p(2) * x(1);
+    p(4) * (x(2) - p(5))^4 + p(6) * x(2)^p(2) * x(1)^2];
     y0 = [100; 100];
     fct_sol = 0;
 
@@ -969,31 +967,31 @@ switch n
     % a = (((y(1)+mu)^2+y(3)^2)^(-1/2))
     % b = (((y(1)-eta)^2+y(3)^2)^(-1/2))
     
-    fct = @(t,y)[   y(2);
+    fct = @(t,y,u)[   y(2);
                     y(1)*(1-eta*(((y(1)+mu)^2+y(3)^2)^(-1/2))^3-mu*(((y(1)-eta)^2+y(3)^2)^(-1/2))^3)+2*y(4)-eta*mu*((((y(1)+mu)^2+y(3)^2)^(-1/2))^3-(((y(1)-eta)^2+y(3)^2)^(-1/2))^3);
                     y(4);
                     y(3)*(1-eta*(((y(1)+mu)^2+y(3)^2)^(-1/2))^3-mu*(((y(1)-eta)^2+y(3)^2)^(-1/2))^3)-2*y(2)];
-    y0 = [0.994 0 0 -2.00158510637908252240537862224];
+    y0 = [0.994; 0; 0; -2.00158510637908252240537862224];
     fct_sol = 0;
 
    case 5
     %% stiff ODE
-    fct = @(t,y)[-1000 * y + 3000 - 2000 * exp(-t)];
+    fct = @(t,y,u)[-1000 * y + 3000 - 2000 * exp(-t)];
     fct_sol = @(t)[3 - 0.998 .* exp(-1000.*t) - 2.002 .* exp(-t)];
     y0 = zeros(1);
     
     case 6
-    fct = @(t,y)[lbd * y + (1-lbd)*cos(t) - (1+lbd)*sin(t)];
+    fct = @(t,y,u)[lbd * y + (1-lbd)*cos(t) - (1+lbd)*sin(t)];
     fct_sol = @(t)[sin(t) + cos(t)];
     y0 = ones(1);
 
     case 7
-    fct = @(t,y)[-2*y(1)^2;    -3*y(2)^3;     -4*y(3)^2];
+    fct = @(t,y,u)[-2*y(1)^2;    -3*y(2)^3;     -4*y(3)^2];
     fct_sol = @(t)[(1./(2.*t + 1)); ((2.^(1/2)*(1./(3*t + 1/2)).^(1/2))./2); (1./(4.*t + 1))];
     y0 = ones(3,1);
 
     case 8
-    fct = @(t,y)[-200*t*y^2];
+    fct = @(t,y,u)[-200*t*y^2];
     fct_sol = @(t)[1./(1+100.*t.^2)];
     y0 = ones(1,1);
 end
@@ -1155,9 +1153,9 @@ f(x) = lmbd * x;
    
    for it=1:size(eig,2)
        for i=1:size(eig,1)
-           if isreal(eig(i,it))
-               h_eig(i,it) = double(abs(real_fac/eig(i,it)));
-           else
+            if isreal(eig(i,it))
+                h_eig(i,it) = double(abs(real_fac/eig(i,it)));
+            else
                R_temp = abs(subs(R, lmbd, eig(i,it)));
                h_sol = vpasolve(1 == R_temp, h, [lowlim uplim]);
                %h_sol(isempty(h_sol)) = 0;
@@ -1172,43 +1170,16 @@ f(x) = lmbd * x;
                     end        
                end
                h_eig(i,it) = double(max(h_sol));
-           end
+            end
        end
    end
 end
-%% Not working
-% Function to calculate the analytical equation for xk+1 for implicit solve
-% function sol = getXk1(f,n)
-%     xk = sym('xk_',[n 1]);
-%     xk1 = sym('xk1_',[n 1]);
-%     syms tk1 h;
-%     eqn = xk1 == xk + h*f(tk1,xk1);
-%     for i=1:n
-%         soli = vpasolve(eqn(i), xk1(i));
-%         sol_temp(i) = soli(1);
-%     end
-%         sol = matlabFunction(sol_temp);
-% end
 
-% Backward euler with xk+1 analytical solution
-% function [t,y] = BWE(f, dT, y0, h_start, h_min, tau)
-% % Backward Euler Method
-% xk1 = getXk1(f,length(y0));
-% tic
-% h = h_start;
-% t_count = 1;
-% t(t_count) = dT(1);
-% y(t_count,:) = y0(:);
-% 
-% while t(t_count)<dT(2)
-%     y(t_count+1,:) = xk1(t(t_count) + h, y(t_count,:), h);
-% 
-%     t_count = t_count + 1;
-%     t(t_count) = t(t_count-1)+h;
-% end
-% el_ode = toc;
-% disp(['Steps of BWE:           ' num2str(length(t))])
-% disp(['Time of BWE:            ' num2str(el_ode)])
-% disp(' ')
-% t=t.';
-% end
+% allgemeine darstellung
+function [y_out, state] = allReset(t,y_in,u,state)
+y_out      = y_in;
+end
+function u = u_input(t)
+u = 0;
+end
+%% Not working

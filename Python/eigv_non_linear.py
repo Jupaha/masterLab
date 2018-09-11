@@ -14,13 +14,6 @@ def gen_xe(N, n, r):
     xs = np.zeros((N, n))
     for i in range(N):
         xs[i] = np.linspace(r[i][0], r[i][1], n)
-        print('xs')
-        print(i)
-        print(xs[i])
-    print('end')
-    print(*xs)
-    print('product')
-    print(it.product(*xs))
     return list(it.product(*xs))
 
 
@@ -35,7 +28,7 @@ def comp_eigenvalues(f, x, r, n):
 
     # generate array with all combinations of x[i]
     xe = gen_xe(N, n, r)
-    print(xe) 
+    #print(xe) 
 
     # solve A for all combinations of xe entrys and compute eigenvalues
     A_all = np.zeros((n**N, N, N), dtype=complex)
@@ -90,17 +83,17 @@ def main():
     p[5] = R_c / (c_w * T_u**k)
 
     # create state vector
-    x = gen_states(3)
+    x = gen_states(2)
+
 
     # define DGLs
     f = sp.Matrix([
         p[0] * x[1]**p[1] * x[0],
-        p[3] * (x[1] - p[4])**4 + p[5] * x[1]**p[1] * x[0]**2,
-        -1*x[2]
+        p[3] * (x[1] - p[4])**4 + p[5] * x[1]**p[1] * x[0]**2
     ])
 
     # define ranges of x[i]
-    r = [(0, 100), (300, 10000), (0, 100)]
+    r = [(0, 100), (300, 10000)]
 
     # define steps in ranges
     n = 10
